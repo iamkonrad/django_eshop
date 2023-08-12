@@ -12,4 +12,4 @@ class Category(models.Model):
         verbose_name_plural = 'categories'                                                                              #instead of 'categorys'
 
     def __str__(self):                                                                                                  #string representation of a category_name
-        return self.category_namem
+        return self.category_name
