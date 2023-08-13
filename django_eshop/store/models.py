@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from category.models import Category
 
@@ -16,6 +17,9 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)                                                    #deleting a category removes products associated with it
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+
+    def get_url(self):                                                                                                  #accessing the slug of category and product, generating url
+        return reverse('product_detail',args=[self.category.slug, self.slug])                                           #of a specific product
 
     def __str__(self):
         return self.product_name
