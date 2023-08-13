@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from carts.models import Cart, CartItem
 from store.models import Product
@@ -35,7 +35,21 @@ def add_cart (request, product_id):
     return redirect('cart')                                                                                             #redirection, updated cart
 
 
+def remove_cart(request, product_id):
+    cart = Cart.objects.get(cart_id=_cart_id(request))                                                                  #the cart id from the request
+    product = get_object_or_404(Product, id=product_id)
+    cart_item = CartItem.objects.get(product=product_id, cart=cart)                                                     #cart item matching product's and cart's ID
+    if cart_item.quantity > 1:                                                                                          #if the qunatity > 1 it gets decreased by 1
+        cart_item.quantity -=1                                                                                          #if it's 1 then the cart item is deleted
+        cart_item.save()
+    else:
+        cart_item.delete()
+    return redirect('cart')
+
+
 def cart(request, total=0, quantity=0,cart_items=None):
+    tax=0
+    grand_total=0
     try:
         cart=Cart.objects.get(cart_id=_cart_id(request))                                                                #retrieving user's cart object based on cart id within the current session
         cart_items=CartItem.objects.filter(cart=cart,is_active=True)                                                    #retrieving all active items associated with the fetched cart
@@ -48,10 +62,10 @@ def cart(request, total=0, quantity=0,cart_items=None):
     except ObjectDoesNotExist:
         pass                                                                                                            #in case no cart exists throw an exception
     context = {
-        'total':total,
+        'total': "{:.2f}".format(total),
         'quantity':quantity,
         'cart_items':cart_items,
-        'tax':tax,
-        'grand_total': grand_total,
+        'tax': "{:.2f}".format(tax),
+        'grand_total': "{:.2f}".format(grand_total),
     }
     return render(request, 'store/cart.html', context)
