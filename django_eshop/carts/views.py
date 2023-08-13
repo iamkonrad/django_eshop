@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 
 from carts.models import Cart, CartItem
@@ -33,5 +34,19 @@ def add_cart (request, product_id):
         cart_item.save()
     return redirect('cart')                                                                                             #redirection, updated cart
 
-def cart(request):
-    return render(request, 'store/cart.html')
+
+def cart(request, total=0, quantity=0,cart_items=None):
+    try:
+        cart=Cart.objects.get(cart_id=_cart_id(request))                                                                #retrieving user's cart object based on cart id within the current session
+        cart_items=CartItem.objects.filter(cart=cart,is_active=True)                                                    #retrieving all active items associated with the fetched cart
+        for cart_item in cart_items:
+            total +=(cart_item.product.price * cart_item.quantity)                                                      #subtotal, product price by its quantity, adding to the total
+            quantity += cart_item.quantity                                                                              #adding the quantity of every cart item to the overall one
+    except ObjectDoesNotExist:
+        pass                                                                                                            #in case no cart exists throw an exception
+    context = {
+        'total':total,
+        'quantity':quantity,
+        'cart_items':cart_items,
+    }
+    return render(request, 'store/cart.html', context)
