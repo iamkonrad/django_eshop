@@ -12,8 +12,9 @@ def _cart_id(request):                                                          
     return cart
 
 def add_cart (request, product_id):
-    color = request.GET['color']                                                                                        #passed from dropdown-menu in product_detail
-    size = request.GET['size']
+    if request.method =="POST":
+        color = request.POST['color']                                                                                   #passed from dropdown-menu in product_detail
+        size = request.POST['size']
 
     product = Product.objects.get(id=product_id)                                                                        #fetching the product
     try:
