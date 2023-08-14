@@ -12,7 +12,7 @@ def _cart_id(request):                                                          
     return cart
 
 def add_cart (request, product_id):
-    product = Product.objects.get(id=product_id)                                                                        #fetching the product
+    product = Product.objects.get(id=product_id)                                                                        #fetching the product; PRODUCT
     product_variation=[]
     if request.method =="POST":
         for item in request.POST:
@@ -37,6 +37,10 @@ def add_cart (request, product_id):
 
     try:                                                                                                                #finding existing cart item for the specific product and cart
         cart_item = CartItem.objects.get(product=product,cart=cart)
+        if len(product_variation)>0:                                                                                    #product variations for the cart item
+            cart_item.variations.clear()
+            for item in product.variation:
+                cart_item.variations.add(item)
         cart_item.quantity +=1                                                                                          #if the item exists in the cart, quantity incremented by one
         cart_item.save()
     except CartItem.DoesNotExist:                                                                                       #creating a new cart item if there is none(quantity=1); linked
@@ -45,6 +49,10 @@ def add_cart (request, product_id):
             quantity = 1,
             cart=cart,
         )
+        if len(product_variation)>0:
+            cart_item.variations.clear()
+            for item in product.variation:
+                cart_item.variations.add(item)
         cart_item.save()
     return redirect('cart')                                                                                             #redirection, updated cart
 
