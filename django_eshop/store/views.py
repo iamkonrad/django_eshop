@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 
 from carts.models import CartItem
@@ -44,3 +45,18 @@ def product_detail(request, category_slug, product_slug):
         'in_cart': in_cart,
     }
     return render(request, 'store/product_detail.html', context)
+
+
+def search(request):
+    if 'keyword' in request.GET:                                                                                        # extracting the search keyword value
+        keyword = request.GET['keyword']                                                                                #storing it inside the keyword variable
+        if keyword:
+            products = Product.objects.order_by('created_date').filter(Q(desctiption__icontains=keyword)|                #looking for a product reference in description and product_name
+                                                                       Q(product_name__icontains=keyword))               #by keyword
+            product_count = products.count()
+
+    context = {
+        'products': products,
+        'product_count': product_count,
+    }
+    return render(request,'store/store.html',context)
