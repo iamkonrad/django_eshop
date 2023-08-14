@@ -54,11 +54,13 @@
                     {% for i in single_product.variation_set.sizes %}
                     <option value="{{ i.variation_value | lower }}">{{ i.variation_value | capfirst }}</option>
                     {% endfor %}
+                </select>
+			</div>
 
 	</div> <!-- row.// -->
 	<hr>
     {% if single_product.stock <= 0 %}
-         <h5> class="text-danger"Out of stock</h5>
+         <h5 class="text-danger">Out of stock</h5>
     {% else %}
           <button type = "submit" class="btn  btn-primary"> <span class="text">Add to cart</span> <i class="fas fa-shopping-cart"></i></button>
     {% endif %}
