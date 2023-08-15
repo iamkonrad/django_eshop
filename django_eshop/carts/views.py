@@ -26,7 +26,6 @@ def add_cart (request, product_id):
             except:
                 pass
 
-
     try:
         cart=Cart.objects.get(cart_id=_cart_id(request))                                                                #retrieving the cart based on the present session id
     except Cart.DoesNotExist:                                                                                           # if no cart exists a new one is created using the present session id
@@ -37,11 +36,7 @@ def add_cart (request, product_id):
 
     is_cart_item_exists = CartItem.objects.filter(product=product,cart=cart).exists()
     if is_cart_item_exists:
-        cart_item = CartItem.objects.filter(product=product, cart=cart)
-        #existing variations
-        #current variation
-        for item in cart_item:
-            existing_variation = item.variations.all()
+        cart_item = CartItem.objects.filter(product=product, cart=cart)                                                 #existing variations
         ex_var_list=[]
         id = []
         for item in cart_item:
@@ -61,7 +56,7 @@ def add_cart (request, product_id):
             if len(product_variation)>0:                                                                                #product variations for the cart item
                 item.variations.clear()
                 item.variations.add(*product_variation)
-                cart_item.save()
+                item.save()
     else:                                                                                                               #creating a new cart item if there is none(quantity=1); linked
         cart_item = CartItem.objects.create(                                                                            #to current product and cart
             product=product,
@@ -74,22 +69,25 @@ def add_cart (request, product_id):
         cart_item.save()
     return redirect('cart')                                                                                             #redirection, updated cart
 
-
-def remove_cart(request, product_id):
+def remove_cart(request, product_id,cart_item_id):
     cart = Cart.objects.get(cart_id=_cart_id(request))                                                                  #the cart id from the request
     product = get_object_or_404(Product, id=product_id)
-    cart_item = CartItem.objects.get(product=product_id, cart=cart)                                                     #cart item matching product's and cart's ID
-    if cart_item.quantity > 1:                                                                                          #if the qunatity > 1 it gets decreased by 1
-        cart_item.quantity -=1                                                                                          #if it's 1 then the cart item is deleted
-        cart_item.save()
-    else:
-        cart_item.delete()
+    try:
+        cart_item = CartItem.objects.get(product=product_id, cart=cart, id=cart_item_id)                                #cart item matching product's and cart's ID
+        if cart_item.quantity > 1:                                                                                      #if the quantity > 1 it gets decreased by 1
+            cart_item.quantity -=1                                                                                      #if it's 1 then the cart item is deleted
+            cart_item.save()
+        else:
+            cart_item.delete()
+    except:
+        pass
+
     return redirect('cart')
 
-def remove_cart_item(request,product_id):
+def remove_cart_item(request,product_id, cart_item_id):
     cart = Cart.objects.get(cart_id=_cart_id(request))                                                                  #retrieving cart id from the urrent session
     product = get_object_or_404(Product,id=product_id)
-    cart_item = CartItem.objects.get(product=product,cart=cart)
+    cart_item = CartItem.objects.get(product=product,cart=cart, id=cart_item_id)
     cart_item.delete()                                                                                                  #remove cart item irrespective of its quantity
     return redirect('cart')
 
