@@ -148,3 +148,18 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: "danger",
 }
+
+EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
+
+                    #For securty reasons below fields should be filled as and if needed
+
+
+#EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST='smtp.gmail.com'
+#EMAIL_PORT='587'
+#EMAIL_USE_TLS='True'
+
+#EMAIL_HOST_USER=''         #Your gmail address
+#EMAIL_HOST_PASSWORD=''     #Your app password
+
+                    #Possible space below for adding PayPal integration if needed
