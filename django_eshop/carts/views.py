@@ -100,8 +100,8 @@ def cart(request, total=0, quantity=0,cart_items=None):
         for cart_item in cart_items:
             total +=(cart_item.product.price * cart_item.quantity)                                                      #subtotal, product price by its quantity, adding to the total
             quantity += cart_item.quantity                                                                              #adding the quantity of every cart item to the overall one
-            tax = (16 * total)/100
-            grand_total = total +tax
+        tax = (16 * total)/100
+        grand_total = total +tax
 
     except ObjectDoesNotExist:
         pass                                                                                                            #in case no cart exists throw an exception
@@ -113,3 +113,28 @@ def cart(request, total=0, quantity=0,cart_items=None):
         'grand_total': "{:.2f}".format(grand_total),
     }
     return render(request, 'store/cart.html', context)
+
+
+def checkout(request, total=0, quantity=0,cart_items=None):
+    tax=0
+    grand_total=0
+    try:
+        cart=Cart.objects.get(cart_id=_cart_id(request))                                                                #retrieving user's cart object based on cart id within the current session
+        cart_items=CartItem.objects.filter(cart=cart,is_active=True)                                                    #retrieving all active items associated with the fetched cart
+        for cart_item in cart_items:
+            total +=(cart_item.product.price * cart_item.quantity)                                                      #subtotal, product price by its quantity, adding to the total
+            quantity += cart_item.quantity                                                                              #adding the quantity of every cart item to the overall one
+        tax = (16 * total)/100
+        grand_total = total +tax
+
+    except ObjectDoesNotExist:
+        pass                                                                                                            #in case no cart exists throw an exception
+    context = {
+        'total': "{:.2f}".format(total),
+        'quantity':quantity,
+        'cart_items':cart_items,
+        'tax': "{:.2f}".format(tax),
+        'grand_total': "{:.2f}".format(grand_total),
+    }
+
+    return render(request,'store/checkout.html', context)
