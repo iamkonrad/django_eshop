@@ -13,6 +13,9 @@ from django.core.mail import EmailMessage
 
 from carts.models import Cart, CartItem
 from carts.views import _cart_id
+from urllib.parse import urlparse, parse_qs
+
+
 
 
 def register(request):
@@ -101,7 +104,15 @@ def login(request):
                 pass
             auth.login(request,user)
             messages.success(request, "You are now logged in.")
-            return redirect('dashboard')
+            url = str(request.META.get('HTTP_REFERER'))
+            try:
+                parsed_url = urlparse(url)
+                params = parse_qs(parsed_url.query)
+                if 'next' in params:
+                    nextPage = params['next'][0]                                                                        # LISTS for each param value
+                    return redirect(nextPage)
+            except:
+                return redirect('dashboard')
         else:                                                                                                           #if user is none
             messages.error(request,'Invalid login credentials')
             return redirect('login')
