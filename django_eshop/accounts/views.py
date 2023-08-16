@@ -69,9 +69,33 @@ def login(request):
                 if is_cart_item_exists:
                     cart_item=CartItem.objects.filter(cart=cart)
 
+
+                    product_variation=[]                                                                                #product variation by cart_id
                     for item in cart_item:
-                        item.user = user
-                        item.save()
+                        variation = item.variations.all()
+                        product_variation.append(list(variation))
+
+                    cart_item = CartItem.objects.filter(user=user)
+                    ex_var_list=[]
+                    id=[]
+                    for item in cart_item:
+                        existing_variation=item.variations.all()
+                        ex_var_list.append(list(existing_variation))
+                        id.append(item.id)
+
+                    for pr in product_variation:
+                        if pr in ex_var_list:
+                            index = ex_var_list.index(pr)
+                            item_id=id[index]
+                            item=CartItem.objects.get(id=item_id)
+                            item.quantity += 1
+                            item.user=user
+                            item.save()
+                        else:
+                            cart_item=CartItem.objects.filter(cart=cart)
+                            for item in cart_item:
+                                item.user = user
+                                item.save()
 
             except:
                 pass
@@ -138,6 +162,7 @@ def forgot_password(request):
     return render(request, 'accounts/forgot_password.html')
 
 def resetpassword_validate(request, uidb64,token):
+    uid = None
     try:
         uid = urlsafe_base64_decode(uidb64).decode()                                                                    #decoding user's pk
         user = Account._default_manager.get(pk=uid)                                                                     #returning an user object
