@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 
@@ -41,7 +42,6 @@ def payments(request):
         CartItem.objects.filter(user=request.user).delete()                                                             #clearing the cart
 
 
-
         mail_subject = "Thank you for your order"                                                                       #sending an email once a transaction has been completed
         message = render_to_string('orders/order_received_email.html', {
             'user': request.user,
@@ -53,7 +53,8 @@ def payments(request):
         send_email.send()
 
 
-        return render(request, 'orders/payment_success.html')
+        return redirect(reverse('order_complete', args=[order.order_number]))
+
     else:
         return render(request, 'orders/payment_failure.html')
 
@@ -101,7 +102,7 @@ def place_order(request, total=0,quantity=0):
             day=int(datetime.date.today().strftime('%d'))
             mt=int(datetime.date.today().strftime('%m'))
             d=datetime.date(yr,mt,day)
-            current_date=d.strftime("%Y%mt%d")
+            current_date=d.strftime("%Y%m%d")
             order_number=current_date + str(data.id)
             data.order_number=order_number
             data.save()
@@ -121,3 +122,18 @@ def place_order(request, total=0,quantity=0):
 
     else:
         return redirect ('checkout')
+
+
+def order_complete(request, order_number):
+    order = get_object_or_404(Order, user=request.user, order_number=order_number)
+    cart_items = OrderProduct.objects.filter(order=order)                                                               #fetching OrderProduct
+
+    grand_total = sum([item.product_price * item.quantity for item in cart_items])
+
+    context = {
+        'cart_items': cart_items,
+        'grand_total': grand_total,
+        'order_number':order.order_number,
+        'order':order,
+    }
+    return render(request, 'orders/order_complete.html', context)
