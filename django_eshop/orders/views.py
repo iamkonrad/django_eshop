@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
 
 from carts.models import CartItem
 from store.models import Product
@@ -6,6 +7,7 @@ from orders.forms import OrderForm
 from. forms import OrderForm
 from .models import Order, OrderProduct, Payment
 import datetime
+from django.core.mail import EmailMessage
 
 
 
@@ -37,6 +39,19 @@ def payments(request):
             product.save()
 
         CartItem.objects.filter(user=request.user).delete()                                                             #clearing the cart
+
+
+
+        mail_subject = "Thank you for your order"                                                                       #sending an email once a transaction has been completed
+        message = render_to_string('orders/order_received_email.html', {
+            'user': request.user,
+            'order':order,
+
+        })
+        to_email = request.user.email
+        send_email = EmailMessage(mail_subject, message, to=[to_email])
+        send_email.send()
+
 
         return render(request, 'orders/payment_success.html')
     else:
