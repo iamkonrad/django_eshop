@@ -1,14 +1,22 @@
-from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
 from carts.models import CartItem
 from orders.forms import OrderForm
 from. forms import OrderForm
-from .models import Order
+from .models import Order, Payment
 import datetime
+from django.contrib import messages
+
 
 
 def payments(request):
-    return render(request,'orders/payments.html')
+    if request.method=='POST':
+        return render(request, 'orders/payment_success.html')
+    else:
+        return render(request, 'orders/payments.html')
+
+
 def place_order(request, total=0,quantity=0):
     current_user = request.user                                                                                         #logged in user
 
@@ -67,6 +75,9 @@ def place_order(request, total=0,quantity=0):
             }
 
             return render(request,'orders/payments.html',context)
+        else:
+            return render (request, 'store')
+
     else:
         return redirect ('checkout')
 

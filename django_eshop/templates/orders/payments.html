@@ -103,7 +103,12 @@
 			<p class="text-center mb-3">
 				<img src="{% static './images/misc/payments.png' %}" height="26">
 			</p>
-			<a href="{% url 'checkout' %}" class="btn btn-primary btn-block"> Make Payment </a>
+                <form method="post" action="{% url 'payments' %}">
+        {% csrf_token %}
+        <input type="hidden" name="orderID" value="{{ order.order_number }}">
+        <button type="submit" class="btn btn-primary btn-block">Make Payment</button>
+    </form>
+
 		</div> <!-- card-body.// -->
 		</div> <!-- card.// -->
 
