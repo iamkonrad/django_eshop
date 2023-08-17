@@ -36,6 +36,8 @@ def payments(request):
             product.stock -=item.quantity
             product.save()
 
+        CartItem.objects.filter(user=request.user).delete()                                                             #clearing the cart
+
         return render(request, 'orders/payment_success.html')
     else:
         return render(request, 'orders/payment_failure.html')
