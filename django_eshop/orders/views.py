@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
 from carts.models import CartItem
+from store.models import Product
 from orders.forms import OrderForm
 from. forms import OrderForm
 from .models import Order, OrderProduct, Payment
@@ -29,6 +30,11 @@ def payments(request):
             order_product.save()
 
             order_product.variation.set(item.variations.all())                                                          #fetching all the variations
+
+
+            product=Product.objects.get(id=item.product_id)                                                             #after payment reducing the stock of a product
+            product.stock -=item.quantity
+            product.save()
 
         return render(request, 'orders/payment_success.html')
     else:
@@ -73,7 +79,7 @@ def place_order(request, total=0,quantity=0):
             data.ip=request.META.get('REMOTE_ADDR')
             data.save()
 
-            #Order number
+            # CREATING A UNIQUE ORDER NUMBER
             yr=int(datetime.date.today().strftime('%Y'))
             day=int(datetime.date.today().strftime('%d'))
             mt=int(datetime.date.today().strftime('%m'))
