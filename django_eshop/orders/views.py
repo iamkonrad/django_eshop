@@ -1,20 +1,38 @@
-from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from carts.models import CartItem
 from orders.forms import OrderForm
 from. forms import OrderForm
-from .models import Order, Payment
+from .models import Order, OrderProduct, Payment
 import datetime
-from django.contrib import messages
 
 
 
 def payments(request):
-    if request.method=='POST':
+    if request.method == 'POST':
+        order_number = request.POST.get('orderID')                                                                      #fetching products by orderID
+
+        if not order_number:
+            return render(request, 'orders/payment_failure.html',)
+
+        order = get_object_or_404(Order, user=request.user, is_ordered=False, order_number=order_number)
+        cart_items = CartItem.objects.filter(user=request.user)
+
+        for item in cart_items:
+            order_product = OrderProduct()
+            order_product.order = order
+            order_product.user = request.user
+            order_product.product = item.product
+            order_product.quantity = item.quantity
+            order_product.product_price = item.product.price
+            order_product.ordered = True
+            order_product.save()
+
+            order_product.variation.set(item.variations.all())                                                          #fetching all the variations
+
         return render(request, 'orders/payment_success.html')
     else:
-        return render(request, 'orders/payments.html')
+        return render(request, 'orders/payment_failure.html')
 
 
 def place_order(request, total=0,quantity=0):
@@ -80,7 +98,3 @@ def place_order(request, total=0,quantity=0):
 
     else:
         return redirect ('checkout')
-
-
-
-
