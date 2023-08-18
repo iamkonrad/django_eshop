@@ -128,12 +128,14 @@ def order_complete(request, order_number):
     order = get_object_or_404(Order, user=request.user, order_number=order_number)
     cart_items = OrderProduct.objects.filter(order=order)                                                               #fetching OrderProduct
 
+    subtotal = sum([item.product_price for item in cart_items])
     grand_total = sum([item.product_price * item.quantity for item in cart_items])
 
     context = {
+        'order': order,
         'cart_items': cart_items,
+        'order_number': order.order_number,
+        'subtotal':subtotal,
         'grand_total': grand_total,
-        'order_number':order.order_number,
-        'order':order,
     }
     return render(request, 'orders/order_complete.html', context)
