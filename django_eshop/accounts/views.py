@@ -35,6 +35,13 @@ def register(request):
             user.phone_number = phone_number                                                                            #can't be used in user directly bcz of model logic
             user.save()
 
+            #USER PROFILE CREATION
+            profile=UserProfile()
+            profile.user_id=user.id
+            profile.profile_picture='default/default-user.png'
+            profile.save()
+
+
             # USER ACTIVATION
             current_site = get_current_site(request)
             mail_subject = "Please activate your account"
@@ -48,8 +55,6 @@ def register(request):
             send_email = EmailMessage(mail_subject,message,to=[to_email])
             send_email.send()
             return redirect('/accounts/login/?command=verification&email='+email)
-        else:
-            form = RegistrationForm()
     else:
         form=RegistrationForm()
 
