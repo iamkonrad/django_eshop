@@ -12,7 +12,7 @@
 		<article class="card">
 		<header class="card-header">
 			<strong class="d-inline-block mr-3">Logged in as:</strong>
-			<span>{{ user.full_name }}</span>
+			<span>{{user.full_name}}</span>
 		</header>
 		<div class="card-body">
 			<div class="row">
@@ -29,7 +29,7 @@
                  <div class="col-md-6">
                 <div class="card" style="text-align:center;">
                     <div class="card-body">
-                     <img src="https://www.w3schools.com/howto/img_avarat.png" alt="User Profile Picture" width="50" height="50" style="border-radius:50%;">
+                     <img src="{{profile_form.profile_picture}}" alt="User Profile Picture" width="50" height="50" style="border-radius:50%;">
                      <p class="mb-0">{{user.email}}</p>
                      <p>{{user.phone_number}}</p>
 
