@@ -147,12 +147,17 @@ def activate(request, uidb64, token):
 
 @login_required(login_url='login')
 def dashboard(request):
-    orders=Order.objects.order_by('created_at').filter(user_id=request.user.id,is_ordered=True)
+    orders=Order.objects.order_by('-created_at').filter(user_id=request.user.id,is_ordered=True)
     orders_count=orders.count()
+    userprofile = UserProfile.objects.get(user_id=request.user.id)
+
     context={
         'orders_count':orders_count,
+        'userprofile': userprofile,
+
     }
     return render(request,'accounts/dashboard.html',context)
+
 
 def forgot_password(request):
     if request.method =='POST':
@@ -225,12 +230,13 @@ def my_orders(request):
     }
     return render(request,'accounts/my-orders.html',context)
 
+
 @login_required(login_url='login')
 def edit_profile(request):
     userprofile=get_object_or_404(UserProfile,user=request.user)
     if request.method == 'POST':
         user_form = UserForm(request.POST,instance=request.user)
-        profile_form = UserProfileForm(request.POST,request.FILES, instance=userprofile)                                     #for passing profile picture file
+        profile_form = UserProfileForm(request.POST,request.FILES, instance=userprofile)                                #for passing profile picture file
         if user_form.is_valid()and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -272,6 +278,7 @@ def change_password(request):
             messages.error(request,'Passwords do not match.')
             return redirect('change_password')
     return render(request,'accounts/change_password.html')
+
 @login_required(login_url='login')
 def order_detail(request,order_id):
     order_detail= OrderProduct.objects.filter(order__order_number=order_id)
