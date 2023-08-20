@@ -47,6 +47,7 @@
 			</div> <!-- card-body.// -->
 		</div>
 	</article> <!-- filter-group  .// -->
+<form action="/store/" method="get">
 	<article class="filter-group">
 		<header class="card-header">
 			<a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
@@ -57,22 +58,22 @@
 		<div class="filter-content collapse show" id="collapse_4" style="">
 			<div class="card-body">
 			  <label class="checkbox-btn">
-			    <input type="checkbox">
+			    <input type="checkbox" name="sizes" value="S">
 			    <span class="btn btn-light"> S </span>
 			  </label>
 
 			  <label class="checkbox-btn">
-			    <input type="checkbox">
+			    <input type="checkbox" name="sizes" value="M">
 			    <span class="btn btn-light"> M </span>
 			  </label>
 
 			  <label class="checkbox-btn">
-			    <input type="checkbox">
+			    <input type="checkbox" name="sizes" value="L">
 			    <span class="btn btn-light"> L </span>
 			  </label>
 
 			  <label class="checkbox-btn">
-			    <input type="checkbox">
+			    <input type="checkbox" name="sizes" value="XXL">
 			    <span class="btn btn-light"> XXL </span>
 			  </label>
 		</div><!-- card-body.// -->
@@ -93,7 +94,7 @@
 				<div class="form-group col-md-6">
 				  <label>Min</label>
 				  <!-- <input class="form-control" placeholder="$0" type="number"> -->
-				  	<select class="mr-2 form-control">
+				  	<select name="min_price" class="mr-2 form-control">
 						<option value="0">$0</option>
 						<option value="50">$50</option>
 						<option value="100">$100</option>
@@ -105,7 +106,8 @@
 				</div>
 				<div class="form-group text-right col-md-6">
 				  <label>Max</label>
-				  	<select class="mr-2 form-control">
+				  	<select name="max_price" class="mr-2 form-control">
+                        <option value="0">$0</option>
 						<option value="50">$50</option>
 						<option value="100">$100</option>
 						<option value="150">$150</option>
@@ -116,11 +118,11 @@
 					</select>
 				</div>
 				</div> <!-- form-row.// -->
-				<button class="btn btn-block btn-primary">Apply</button>
+				<button class="btn btn-block btn-primary" type="submit">Apply</button>
 			</div><!-- card-body.// -->
 		</div>
 	</article> <!-- filter-group .// -->
-
+</form>
 </div> <!-- card.// -->
 
 	</aside> <!-- col.// -->

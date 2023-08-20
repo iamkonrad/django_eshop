@@ -7,30 +7,33 @@ from store.forms import ReviewForm
 from store.models import Product, ReviewRating, ProductGallery
 from category.models import Category
 from carts.views import _cart_id
-from django.core.paginator import EmptyPage,PageNotAnInteger, Paginator
+from django.core.paginator import  Paginator
 from django.contrib import messages
 
 
-def store(request, category_slug=None):                                                                                 #default set to None
-    categories=None                                                                                                     #default set to None
-    products=None                                                                                                       #default set to None
 
-    if category_slug != None:                                                                                           #fetch products associated with a category
-        categories = get_object_or_404(Category,slug=category_slug)
+def store(request, category_slug=None):
+
+    if category_slug:                                                                                                   #products queryset
+        categories = get_object_or_404(Category, slug=category_slug)
         products = Product.objects.filter(category=categories, is_available=True)
-        paginator = Paginator(products, 9)                                                                              # number of products displayed per page
-        page = request.GET.get('page')                                                                                  # passing page number through get method
-        paged_products = paginator.get_page(page)
-        product_count = products.count()
-    else:                                                                                                               #fetch all available products without filtering by category
+    else:
         products = Product.objects.all().filter(is_available=True)
-        paginator = Paginator(products, 9)                                                                              # number of products displayed per page
-        page = request.GET.get('page')                                                                                  # passing page number through get method
-        paged_products = paginator.get_page(page)
-        product_count = products.count()                                                                                #counting the products and assigning the number to a variabe
+
+    min_price = request.GET.get('min_price')                                                                            #filter by price range
+    max_price = request.GET.get('max_price')
+    if min_price:
+        products = products.filter(price__gte=min_price)
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
+    paginator = Paginator(products, 9)                                                                                  #pagination
+    page = request.GET.get('page')
+    paged_products = paginator.get_page(page)
+    product_count = products.count()
 
     context = {
-        'products':paged_products,                                                                                      # paged 9 products
+        'products':paged_products,
         'product_count':product_count,
 
     }
