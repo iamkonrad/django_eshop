@@ -66,18 +66,35 @@ def product_detail(request, category_slug, product_slug):
 
 
 def search(request):
-    if 'keyword' in request.GET:                                                                                        # extracting the search keyword value
-        keyword = request.GET['keyword']                                                                                #storing it inside the keyword variable
-        if keyword:
-            products = Product.objects.order_by('created_date').filter(Q(description__icontains=keyword)|                #looking for a product reference in description and product_name
-                                                                       Q(product_name__icontains=keyword))               #by keyword
-            product_count = products.count()
+    keyword = request.GET.get('keyword')
 
-    context = {
-        'products': products,
-        'product_count': product_count,
-    }
-    return render(request,'store/store.html',context)
+    if keyword:                                                                                                         #first try to search it by keyword
+        products = Product.objects.filter(Q(description__icontains=keyword) | Q(product_name__icontains=keyword))
+
+        if not products:                                                                                                #if keyword doesn't match then follow the logic
+            if keyword.endswith('s'):
+                products = Product.objects.filter(
+                    Q(description__icontains=keyword[:-1]) | Q(product_name__icontains=keyword[:-1]))
+            elif keyword.endswith('es'):
+                products = Product.objects.filter(
+                    Q(description__icontains=keyword[:-2]) | Q(product_name__icontains=keyword[:-2]))
+            elif keyword.endswith('ies'):
+                singular_keyword = keyword[:-3] + 'y'
+                products = Product.objects.filter(
+                    Q(description__icontains=singular_keyword) | Q(product_name__icontains=singular_keyword))
+            else:
+                products = Product.objects.filter(
+                    Q(description__icontains=keyword + 's') | Q(product_name__icontains=keyword + 's'))
+
+        product_count = products.count()
+
+        context = {
+            'products': products,
+            'product_count': product_count,
+        }
+        return render(request, 'store/store.html', context)
+
+    return render(request, 'store/store.html')
 
 def submit_review(request, product_id):
     url=request.META.get('HTTP_REFERER')
