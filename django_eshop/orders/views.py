@@ -131,6 +131,9 @@ def order_complete(request, order_number):
     subtotal = sum([item.product_price for item in cart_items])
     grand_total = sum([item.product_price * item.quantity for item in cart_items])
 
+    order.is_ordered = True
+    order.save()
+
     context = {
         'order': order,
         'cart_items': cart_items,
