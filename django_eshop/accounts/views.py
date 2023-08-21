@@ -64,63 +64,50 @@ def register(request):
     }
     return render(request,'accounts/register.html',context)
 
+
 def login(request):
-    if request.method=="POST":
-        email=request.POST['email']
-        password=request.POST['password']
+    if request.method == "POST":
+        email = request.POST['email']
+        password = request.POST['password']
 
-        user=auth.authenticate(email=email, password=password)
+        user = auth.authenticate(email=email, password=password)
 
-        if user is not None:
+        if user:
             try:
-                cart=Cart.objects.get(cart_id=_cart_id(request))
-                is_cart_item_exists=CartItem.objects.filter(cart=cart).exists()
-                if is_cart_item_exists:
-                    cart_item=CartItem.objects.filter(cart=cart)
+                cart = Cart.objects.get(cart_id=_cart_id(request))
+                if CartItem.objects.filter(cart=cart).exists():
+                    cart_items = CartItem.objects.filter(cart=cart)
+                    product_variation = [list(item.variations.all()) for item in cart_items]
 
-
-                    product_variation=[]                                                                                #product variation by cart_id
-                    for item in cart_item:
-                        variation = item.variations.all()
-                        product_variation.append(list(variation))
-
-                    cart_item = CartItem.objects.filter(user=user)
-                    ex_var_list=[]
-                    id=[]
-                    for item in cart_item:
-                        existing_variation=item.variations.all()
-                        ex_var_list.append(list(existing_variation))
-                        id.append(item.id)
+                    user_items = CartItem.objects.filter(user=user)
+                    ex_var_list = [list(item.variations.all()) for item in user_items]
+                    ids = [item.id for item in user_items]
 
                     for pr in product_variation:
                         if pr in ex_var_list:
                             index = ex_var_list.index(pr)
-                            item_id=id[index]
-                            item=CartItem.objects.get(id=item_id)
+                            item = CartItem.objects.get(id=ids[index])
                             item.quantity += 1
-                            item.user=user
+                            item.user = user
                             item.save()
                         else:
-                            cart_item=CartItem.objects.filter(cart=cart)
-                            for item in cart_item:
+                            for item in cart_items:
                                 item.user = user
                                 item.save()
-
-            except:
+            except Cart.DoesNotExist:
                 pass
-            auth.login(request,user)
+
+            auth.login(request, user)
             messages.success(request, "You are now logged in.")
-            url = str(request.META.get('HTTP_REFERER'))
-            try:
-                parsed_url = urlparse(url)
-                params = parse_qs(parsed_url.query)
-                if 'next' in params:
-                    nextPage = params['next'][0]                                                                        # LISTS for each param value
-                    return redirect(nextPage)
-            except:
-                return redirect('dashboard')
-        else:                                                                                                           #if user is none
-            messages.error(request,'Invalid login credentials')
+
+            referrer = request.META.get('HTTP_REFERER', '')
+            parsed_url = urlparse(referrer)
+            params = parse_qs(parsed_url.query)
+            next_page = params.get('next', [reverse('dashboard')])[0]
+            return redirect(next_page)
+
+        else:
+            messages.error(request, 'Invalid login credentials')
             return redirect('login')
 
     return render(request, 'accounts/login.html')
@@ -262,7 +249,7 @@ def change_password(request):
         new_password=request.POST['new_password']
         confirm_password=request.POST['confirm_password']
 
-        user = Account.objects.get(username__exact=request.username)
+        user = Account.objects.get(username__exact=request.user.username)
 
         if new_password == confirm_password:
             success=user.check_password(current_password)
