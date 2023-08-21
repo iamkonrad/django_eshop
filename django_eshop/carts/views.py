@@ -169,7 +169,7 @@ def cart(request, total=0, quantity=0,cart_items=None):
         for cart_item in cart_items:
             total +=(cart_item.product.price * cart_item.quantity)                                                      #subtotal, product price by its quantity, adding to the total
             quantity += cart_item.quantity                                                                              #adding the quantity of every cart item to the overall one
-        tax = (16 * total)/100
+        tax = round((16 * total) / 100, 2)
         grand_total = total +tax
 
     except ObjectDoesNotExist:
@@ -199,7 +199,7 @@ def checkout(request, total=0, quantity=0,cart_items=None):
         for cart_item in cart_items:
             total +=(cart_item.product.price * cart_item.quantity)                                                      #subtotal, product price by its quantity, adding to the total
             quantity += cart_item.quantity                                                                              #adding the quantity of every cart item to the overall one
-        tax = (16 * total)/100
+        tax = round((16 * total) / 100, 2)
         grand_total = total +tax
 
     except ObjectDoesNotExist:

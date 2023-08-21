@@ -77,7 +77,7 @@
                                                     </div>
                                                 </td>
                                             <td class="text-center">{{ item.quantity }}</td>
-                                            <td class="text-center">{{ item.product_price }}</td>
+                                            <td class="text-center">{{ item.product_price|floatformat:2 }}</td>
 
                                         {% endfor %}
                                         </tbody>
@@ -88,12 +88,12 @@
                                             </tr>
                                             <tr>
                                                 <th colspan="2" class="text-right">Tax:</th>
-                                                <th class="text-center">${{ order.tax }}</th>
+                                                <th class="text-center">${{ tax }}</th>
                                             </tr>
 
                                             <tr>
                                                 <th colspan="2" class="text-right">Grand Total:</th>
-                                                <th class="text-center">${{ order.order_total }}</th>
+                                                <th class="text-center">${{ order.order_total|floatformat:2 }}</th>
                                             </tr>
                                         </tfoot>
                                     </table>

@@ -4,12 +4,12 @@ from django.template.loader import render_to_string
 
 from carts.models import CartItem
 from store.models import Product
-from orders.forms import OrderForm
 from. forms import OrderForm
-from .models import Order, OrderProduct, Payment
+from .models import Order, OrderProduct
 import datetime
 from django.core.mail import EmailMessage
-
+import random
+import string
 
 
 def payments(request):
@@ -97,23 +97,23 @@ def place_order(request, total=0,quantity=0):
             data.ip=request.META.get('REMOTE_ADDR')
             data.save()
 
-            # CREATING A UNIQUE ORDER NUMBER
-            yr=int(datetime.date.today().strftime('%Y'))
+            yr=int(datetime.date.today().strftime('%Y'))                                                                #Unique order number
             day=int(datetime.date.today().strftime('%d'))
             mt=int(datetime.date.today().strftime('%m'))
             d=datetime.date(yr,mt,day)
-            current_date=d.strftime("%Y%m%d")
-            order_number=current_date + str(data.id)
-            data.order_number=order_number
+            current_date = datetime.date.today().strftime("%Y%m%d")
+            random_letters = ''.join(random.choices(string.ascii_letters, k=8))
+            order_number = current_date + str(data.id) + random_letters
+            data.order_number = order_number
             data.save()
 
             order=Order.objects.get(user=current_user,is_ordered=False, order_number=order_number)
             context= {
                 'order':order,
                 'cart_items': cart_items,
-                'total': total,
-                'tax':tax,
-                'grand_total':grand_total,
+                'total': "{:.2f}".format(total),
+                'tax': "{:.2f}".format(tax),
+                'grand_total': "{:.2f}".format(grand_total),
             }
 
             return render(request,'orders/payments.html',context)
@@ -130,6 +130,8 @@ def order_complete(request, order_number):
 
     subtotal = sum([item.product_price for item in cart_items])
     grand_total = sum([item.product_price * item.quantity for item in cart_items])
+    total=subtotal
+    tax = round((16 * total) / 100, 2)
 
     order.is_ordered = True
     order.save()
@@ -138,7 +140,9 @@ def order_complete(request, order_number):
         'order': order,
         'cart_items': cart_items,
         'order_number': order.order_number,
-        'subtotal':subtotal,
-        'grand_total': grand_total,
+        'total': "{:.2f}".format(total),
+        'tax': "{:.2f}".format(tax),
+        'subtotal': "{:.2f}".format(subtotal),
+        'grand_total': "{:.2f}".format(grand_total),
     }
     return render(request, 'orders/order_complete.html', context)
