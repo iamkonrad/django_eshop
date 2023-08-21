@@ -1,21 +1,44 @@
 {%  load static %}
 
+
 <header class="section-header">
 <nav class="navbar p-md-0 navbar-expand-sm navbar-light border-bottom">
 <div class="container">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop4" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarTop4">
-    <ul class="navbar-nav mr-auto">
-    	<li class="nav-item dropdown">
-		 	<a href="#" class="nav-link">   English </a>
 
-		</li>
-		<li class="nav-item dropdown">
-			<a href="#" class="nav-link"> USD </a>
-		</li>
+<div class="collapse navbar-collapse" id="navbarTop4">
+    <ul class="navbar-nav mr-auto">
+
+        <!-- Dropdown for Language -->
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                English
+            </a>
+            <div class="dropdown-menu" aria-labelledby="languageDropdown">
+                <a class="dropdown-item" href="#">English</a>
+                <a class="dropdown-item" href="#">Chinese|中文</a>
+                <a class="dropdown-item" href="#">Spanish|Español</a>
+                <a class="dropdown-item" href="#">Hindi|हिंदी</a>
+                <a class="dropdown-item" href="#">French|Français</a>
+            </div>
+        </li>
+
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="currencyDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                $USD
+            </a>
+            <div class="dropdown-menu" aria-labelledby="currencyDropdown">
+                <a class="dropdown-item" href="#">$USD</a>
+                <a class="dropdown-item" href="#">¥RMB</a>
+                <a class="dropdown-item" href="#">€EUR</a>
+                <a class="dropdown-item" href="#">₹INR</a>
+            </div>
+        </li>
     </ul>
+
+
     <ul class="navbar-nav">
 		<li><a href="#" class="nav-link"> <i class="fa fa-envelope"></i> Email </a></li>
 		<li><a href="#" class="nav-link"> <i class="fa fa-phone"></i> Call us </a></li>

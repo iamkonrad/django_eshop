@@ -1,36 +1,113 @@
 <!-- ========================= FOOTER ========================= -->
 <footer class="section-footer border-top">
-	<div class="container">
-		<section class="footer-bottom border-top row">
-			<div class="col-md-2">
-				<p class="text-muted"> &copy 2023 STYLERO </p>
-			</div>
-			<div class="col-md-8 text-md-center">
-				<span  class="px-2">in6fo@psttylero.m2</span>
-				<span  class="px-2">+123-456-7890</span>
-				<span  class="px-2">50th STYLERO ST, 123 Av</span>
-			</div>
-			<div class="col-md-2 text-md-right text-muted">
-				<i class="fab fa-lg fa-cc-visa"></i>
-				<i class="fab fa-lg fa-cc-paypal"></i>
-				<i class="fab fa-lg fa-cc-mastercard"></i>
-			</div>
-		</section>
-	</div><!-- //container -->
+
+    <section class="footer-main border-top padding-y">
+        <div class="container">
+            <div class="row">
+                <aside class="col-md">
+                    <h6 class="title">Company</h6>
+                    <ul class="list-unstyled">
+                        <li> <a href="#">About us</a></li>
+                        <li> <a href="#">Careers</a></li>
+                        <li> <a href="#">Privacy Policy</a></li>
+                        <li> <a href="#"> Terms of use</a></li>
+                    </ul>
+                </aside>
+                <aside class="col-md">
+                    <h6 class="title">Help</h6>
+                    <ul class="list-unstyled">
+                        <li> <a href="#">Contact us</a></li>
+                        <li> <a href="#">Refunds</a></li>
+                        <li> <a href="#">Order status</a></li>
+                        <li> <a href="#">Shipping info</a></li>
+                    </ul>
+                </aside>
+                <aside class="col-md">
+                    <h6 class="title">Suggestions</h6>
+                    <ul class="list-unstyled">
+                        <li> <a href="#"> Submit a suggestion </a></li>
+                        <li> <a href="#"> Report a fraud </a></li>
+                        <li> <a href="#"> Feedback </a></li>
+                    </ul>
+                </aside>
+                <aside class="col-md">
+                    <h6 class="title">Resources</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#"> Environmental impact </a> </li>
+                        <li><a href="#"> Disclaimer</a> </li>
+                        <li><a href="#"> Request a sample </a></li>
+                    </ul>
+                </aside>
+            </div>
+        </div>
+    </section><!-- footer-top.// -->
+
+        <section id="newsletter-section" class="footer-main border-top padding-y">
+
+        <div class="container">
+            <div class="row justify-content-center">
+
+                <div class="col-md-5 mt-1">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div id="message" class="container">
+                                <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">
+                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error: {% endif %}
+                                    {{ message }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" action="{% url 'subscribe' %}">
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            Subscribe to our newsletter:
+                        </div>
+                        <div class="input-group">
+                            <input type="text" placeholder="Email" class="form-control" name="EmailNewsLetter">
+                            <span class="input-group-append">
+                                <button type="submit" class="btn btn-primary">Subscribe</button>
+                            </span>
+                        </div> <!-- input-group.// -->
+                    </form>
+                </div>
+
+            </div> <!-- row.// -->
+        </div><!-- //container -->
+    </section><!-- footer-top.// -->
+
+    <section class="footer-bottom border-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="pr-2">&copy 2023 Stylero</span>
+                </div>
+                <div class="col-md-6 text-md-right">
+                    <a href="#" class="btn btn-icon btn-light"><i class="fab fa-google-play"></i></a>
+                    <a href="#" class="btn btn-icon btn-light"><i class="fab fa-app-store-ios"></i></a>
+                    <a href="#" class="btn btn-icon btn-light"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="btn btn-icon btn-light"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="btn btn-icon btn-light"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div> <!-- row.// -->
+        </div><!-- //container -->
+    </section>
+
 </footer>
 <!-- ========================= FOOTER END // ========================= -->
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
         $('.thumb a').click(function(e){
             e.preventDefault();
-            $('.mainImage img').attr('src',$(this).attr("href"));
+            $('.mainImage img').attr('src', $(this).attr("href"));
         })
     })
-
 </script>
-
 
 </body>
 </html>
-

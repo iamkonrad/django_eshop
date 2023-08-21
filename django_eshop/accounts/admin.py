@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 
-from .models import Account, UserProfile
+from .models import Account, UserProfile, EmailNewsLetter
 
 
 class AccountAdmin(UserAdmin):
@@ -21,5 +21,13 @@ class UserProfileAdmin(admin.ModelAdmin):
     thumbnail.short_description= 'Profile Picture'
     list_display=('user','city','state','country')
 
+
+class EmailNewsLetterAdmin(admin.ModelAdmin):
+    list_display=('email','created_at','updated_at')
+
+
+
+
 admin.site.register(Account, AccountAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(EmailNewsLetter, EmailNewsLetterAdmin)

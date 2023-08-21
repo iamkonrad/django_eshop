@@ -4,9 +4,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.urls import reverse
 
 from accounts.forms import RegistrationForm, UserForm,UserProfileForm
-from accounts.models import Account, UserProfile
+from accounts.models import Account, UserProfile, EmailNewsLetter
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
@@ -292,3 +293,21 @@ def order_detail(request,order_id):
         'subtotal':subtotal,
     }
     return render (request,'accounts/order_detail.html',context)
+
+
+def subscribe(request):
+    if request.method =="POST" and request.POST.get('EmailNewsLetter'):
+        email=request.POST.get('EmailNewsLetter')
+        exists=EmailNewsLetter.objects.filter(email=email).exists()
+
+        if not exists:
+            EmailNewsLetter.objects.create(email=email)
+            messages.success(request, 'Your email has been added to our database.')
+        else:
+            messages.info(request,'This email has already been added.')
+
+        referrer = request.META.get('HTTP_REFERER', reverse('home'))
+        return redirect(f'{referrer}#newsletter-section')
+
+
+    return redirect(reverse('home'))
