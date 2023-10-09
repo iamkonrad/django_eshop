@@ -1,5 +1,8 @@
 # django_eshop  (written in Django, using HTML and CSS)
 
+https://github.com/iamkonrad/django_eshop/assets/133384502/a86a82e3-3832-4db1-a2d8-7b04c54ee63b
+
+
 ## Some important points about this webapp:
 
 1.DEFAULT ADMIN URL, default admin url IS NOT /admin, this project utilizes Honeypot; admin url path can be found inside the main app's (django_eshop) urls
@@ -14,3 +17,14 @@
 
 
 ## Some of the key functionalities:
+- Fully functional cart (CRUD)
+- Newsletter
+- Registration validation sent via email
+- Star and review rating system
+- User profile and account (order tracking, change password etc.)
+- Upon order completion generates an invoice
+- Product variation (colors and sizes)
+- Pagination
+- Safety features (admin honeypot)
+- Securely stored secret key
+- Django messages (upon login, logout etc)
